@@ -1,0 +1,42 @@
+#! /bin/sh
+# Code adapted from: Equivariant Hypergraph Neural Networks, 2022,
+# Jinwoo Kim and Saeyoon Oh and Sungjun Cho and Seunghoon Hong.
+# Available from: https://github.com/jw9730/ehnn
+# Article: https://arxiv.org/abs/2208.10428
+# Accessed: 30 September 2023
+ehnn_n_layers=2
+ehnn_hidden_channel=256
+ehnn_n_heads=4
+ehnn_hyper_layers=3
+ehnn_hyper_dropout=0
+ehnn_input_dropout=0
+ehnn_mlp_classifier="True"
+Classifier_num_layers=1
+Classifier_hidden=128
+normalization='ln'
+lr=0.001
+dropout=0
+ehnn_att0_dropout=0
+ehnn_att1_dropout=0
+wd=0
+epochs=$1
+warmup_epochs=$2
+ehnn_only=$3
+runs=$4
+
+ehnn_inner_channel=$ehnn_hidden_channel
+ehnn_qk_channel=$ehnn_hidden_channel
+ehnn_pe_dim=$ehnn_hidden_channel
+ehnn_hyper_dim=$ehnn_hidden_channel
+
+for folder in \
+ 4_visits_ABL_FAMILY_AND_GENETICS_hg_input 4_visits_ABL_COMORBIDITIES_hg_input 4_visits_ABL_DEMO_hg_input 4_visits_ABL_CDR_hg_input 4_visits_ABL_SOCIAL_hg_input \
+ 4_visits_ABL_HEALTH_hg_input 4_visits_ABL_BEHAVIOUR_COGNITION_hg_input 4_visits_ABL_MEDICATION_hg_input 4_visits_ABL_DEPENDENCE_hg_input 4_visits_ABL_DEPRESSION_hg_input
+do
+  bash run_one_model.sh $ehnn_n_layers $ehnn_hidden_channel $ehnn_inner_channel \
+  $ehnn_qk_channel $ehnn_n_heads $ehnn_pe_dim $ehnn_hyper_dim $ehnn_hyper_layers $ehnn_hyper_dropout \
+  $ehnn_input_dropout $lr $dropout $ehnn_mlp_classifier $wd \
+  $Classifier_hidden $Classifier_num_layers $normalization $ehnn_att0_dropout $ehnn_att1_dropout \
+  $folder $epochs $warmup_epochs $ehnn_only $runs
+done
+
